@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>my study space ✦</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#faf7f2">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="study space">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root{
+  --bg:#faf7f2;
+  --surface:#ffffff;
+  --ink:#2d2a26;
+  --ink-soft:#8a8378;
+  --card:#ffffff;
+  --line:#ece5da;
+  --shadow:0 2px 6px rgba(45,42,38,.05), 0 12px 32px rgba(45,42,38,.06);
+  --shadow-hover:0 6px 14px rgba(45,42,38,.09), 0 24px 52px rgba(45,42,38,.13);
+  --rose:#f4a7b9; --peach:#f6c390; --mint:#a8d8b9; --sky:#a5c8f0; --lav:#c3b2e8; --butter:#f2dd8a;
+  --radius:22px;
+  --font:'Outfit',system-ui,sans-serif;
+  --serif:'DM Serif Display',Georgia,serif;
+}
+:root[data-theme="dark"]{
+  --bg:#171513; --ink:#efe9df; --ink-soft:#a39b8e; --card:#221f1c; --line:#38332d; --surface:#2b2723;
+  --shadow:0 2px 6px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+  --shadow-hover:0 6px 14px rgba(0,0,0,.4), 0 24px 52px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--ink);
+  min-height:100vh; padding:48px 20px 120px;
+  background-image:radial-gradient(circle at 12% 8%, rgba(244,167,185,.14), transparent 42%),
+                   radial-gradient(circle at 88% 20%, rgba(165,200,240,.14), transparent 42%),
+                   radial-gradient(circle at 50% 95%, rgba(168,216,185,.12), transparent 45%);
+}
+.wrap{max-width:880px;margin:0 auto}
+
+/* ── header ───────────────────────── */
+.hero{text-align:center;margin-bottom:36px;animation:fadeUp .7s ease both}
+.hero .kicker{font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.hero h1{font-family:var(--serif);font-size:clamp(2.4rem,6vw,3.6rem);font-weight:400;margin:10px 0 6px}
+.hero h1 em{font-style:italic;color:#d17a92}
+.hero .date{color:var(--ink-soft);font-size:.95rem}
+
+/* ── countdown ─────────────────────── */
+.countdown{
+  display:inline-flex;align-items:center;gap:10px;margin-top:16px;
+  background:var(--card);border:1px solid var(--line);border-radius:99px;
+  box-shadow:var(--shadow);padding:10px 22px;animation:pulse 3s ease-in-out infinite;
+}
+.countdown .num{font-family:var(--serif);font-size:1.6rem;color:#d17a92;min-width:2ch;text-align:center}
+.countdown .lbl{font-size:.9rem;color:var(--ink-soft)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+
+/* ── overall progress pill ────────── */
+.overview{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:34px;overflow:hidden;
+  animation:fadeUp .7s .1s ease both;
+}
+.carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.carousel::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;padding:26px 30px 14px;min-height:150px}
+.slide-main{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.dots{display:flex;justify-content:center;gap:7px;padding:0 0 14px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.25s;cursor:pointer}
+.dots i.on{background:#d17a92;width:20px;border-radius:99px}
+.slide-title{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:14px;text-align:center}
+.subj-rings{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.subj-ring{display:flex;flex-direction:column;align-items:center;gap:8px;width:96px;cursor:pointer;transition:transform .2s}
+.subj-ring:hover{transform:translateY(-3px)}
+.subj-ring .ring{width:72px;height:72px}
+.subj-ring .pct{font-size:.95rem}
+.subj-ring .sr-name{font-weight:600;font-size:.85rem;text-align:center;line-height:1.2}
+.subj-ring .sr-meta{font-size:.74rem;color:var(--ink-soft);margin-top:-4px}
+.ring{position:relative;width:86px;height:86px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring .track{stroke:var(--line)}
+.ring .fill{stroke:url(#gradRing);stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.22,1,.36,1)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:1.15rem}
+.ov-text{flex:1;min-width:200px}
+.ov-text h2{font-family:var(--serif);font-weight:400;font-size:1.5rem}
+.ov-text p{color:var(--ink-soft);font-size:.92rem;margin-top:4px}
+
+/* ── add subject bar ───────────────── */
+.addbar{display:flex;gap:12px;max-width:560px;margin:0 auto 40px;animation:fadeUp .7s .18s ease both}
+.addbar input{
+  flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:99px;
+  padding:14px 24px;font:inherit;font-size:1rem;color:var(--ink);outline:none;
+  transition:border-color .25s, box-shadow .25s;
+}
+.addbar input::placeholder{color:#c0b8ab}
+.addbar input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(244,167,185,.18)}
+.btn{
+  cursor:pointer;border:none;border-radius:99px;padding:14px 26px;
+  font:inherit;font-weight:600;font-size:.95rem;transition:transform .2s, box-shadow .2s, filter .2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn-primary{background:var(--ink);color:var(--bg);box-shadow:0 6px 18px rgba(45,42,38,.22)}
+.btn-primary:hover{filter:brightness(1.25)}
+.btn-soft{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);padding:8px 14px;font-size:.8rem}
+.btn-soft:hover{color:#c96a80;border-color:var(--rose)}
+
+/* ── subject cards (home) ─────────── */
+.subj-grid{display:grid;gap:18px}
+.subj-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:24px 26px;cursor:pointer;position:relative;overflow:hidden;
+  display:flex;align-items:center;gap:18px;
+  animation:fadeUp .6s ease both;transition:transform .25s, box-shadow .25s;
+}
+.subj-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.subj-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--sc);
+}
+.subj-icon{
+  width:52px;height:52px;border-radius:16px;flex-shrink:0;
+  background:color-mix(in srgb, var(--sc) 20%, var(--surface));
+  display:grid;place-items:center;font-size:1.5rem;
+}
+.subj-card .info{flex:1;min-width:0}
+.subj-card h2{font-family:var(--serif);font-weight:400;font-size:1.45rem}
+.subj-card .meta{color:var(--ink-soft);font-size:.85rem;margin-top:2px}
+.subj-card .bar{height:7px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:10px;max-width:340px}
+.subj-card .fill{height:100%;border-radius:99px;background:var(--sc);width:0;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.subj-card .arrow{
+  font-size:1.3rem;color:color-mix(in srgb, var(--sc) 70%, var(--ink));flex-shrink:0;
+  transition:transform .25s;
+}
+.subj-card:hover .arrow{transform:translateX(5px)}
+.subj-card .del{
+  position:absolute;top:12px;right:12px;font-size:.8rem;opacity:0;transition:.2s;
+}
+.subj-card:hover .del{opacity:1}
+
+/* ── subject page ──────────────────── */
+.page{display:none}
+.page.active{display:block;animation:pageIn .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes pageIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;background:var(--card);
+  border:1.5px solid var(--line);border-radius:99px;padding:9px 20px;
+  font:inherit;font-weight:600;font-size:.88rem;color:var(--ink);cursor:pointer;
+  margin-bottom:26px;transition:.2s;
+}
+.back-btn:hover{border-color:var(--sc);transform:translateX(-3px)}
+
+.subject-page-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.subject-page-head h2{font-family:var(--serif);font-weight:400;font-size:2.2rem;flex:1}
+.subject-page-head .subj-stats{color:var(--ink-soft);font-size:.95rem}
+
+/* division tabs */
+.div-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 24px}
+.div-tab{
+  cursor:pointer;border:1.5px solid var(--line);background:var(--card);border-radius:99px;
+  padding:9px 20px;font:inherit;font-weight:600;font-size:.88rem;color:var(--ink-soft);
+  transition:.2s;display:inline-flex;align-items:center;gap:8px;
+}
+.div-tab:hover{border-color:var(--sc);color:var(--ink)}
+.div-tab.active{background:var(--sc);border-color:var(--sc);color:#2d2a26;box-shadow:0 4px 14px color-mix(in srgb, var(--sc) 45%, transparent)}
+.div-tab .mini-pct{font-size:.72rem;background:var(--line);padding:1px 8px;border-radius:99px}
+
+/* ── chapter card ──────────────────── */
+.chapter{
+  display:flex;gap:14px;background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px;margin-bottom:12px;
+  transition:opacity .3s, transform .2s;
+}
+.chapter:hover{transform:translateX(3px);box-shadow:var(--shadow)}
+.chapter.done{opacity:.55}
+.chk{position:relative;width:24px;height:24px;flex-shrink:0;margin-top:2px;cursor:pointer}
+.chk input{position:absolute;opacity:0;inset:0;cursor:pointer;z-index:2}
+.chk .box{
+  position:absolute;inset:0;border-radius:8px;border:2px solid #cfc6b6;background:var(--surface);
+  display:grid;place-items:center;transition:.25s cubic-bezier(.34,1.56,.64,1);
+}
+.chk .box svg{width:13px;height:13px;stroke:#fff;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .35s .1s ease}
+.chk input:checked + .box{background:var(--sc);border-color:var(--sc);transform:scale(1.06)}
+.chk input:checked + .box svg{stroke-dashoffset:0}
+.ch-body{flex:1;min-width:0}
+.ch-head{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+.ch-head .caret{font-size:.7rem;color:var(--ink-soft);transition:transform .25s;flex-shrink:0}
+.chapter.open .caret{transform:rotate(90deg)}
+.ch-more{display:none}
+.chapter.open .ch-more{display:block}
+.ch-title{font-weight:600;font-size:1.05rem;position:relative;display:inline-block;transition:color .3s}
+.ch-title::after{content:'';position:absolute;left:0;top:55%;height:2px;width:0;background:var(--ink-soft);transition:width .35s ease}
+.chapter.done .ch-title{color:var(--ink-soft)}
+.chapter.done .ch-title::after{width:100%}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{
+  font-size:.74rem;font-weight:600;padding:4px 12px;border-radius:99px;
+  background:color-mix(in srgb, var(--sc) 9%, var(--surface));border:1px solid color-mix(in srgb, var(--sc) 25%, var(--line));color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:5px;
+}
+.chip.done-chip{background:color-mix(in srgb, var(--sc) 22%, var(--surface));border-color:var(--sc);color:var(--ink)}
+
+/* to-dos */
+.todos{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.todo{display:flex;align-items:center;gap:9px;font-size:.9rem;color:var(--ink-soft);animation:fadeUp .35s ease both}
+.todo .tchk{width:17px;height:17px;accent-color:var(--sc);cursor:pointer;flex-shrink:0}
+.todo span{transition:.25s;position:relative}
+.todo span::after{content:'';position:absolute;left:0;top:55%;height:1.5px;width:0;background:var(--ink-soft);transition:width .3s}
+.todo span.done{color:#b3aa9b}
+.todo span.done::after{width:100%}
+.todo .icon-btn{font-size:.72rem;opacity:0;padding:3px}
+.todo:hover .icon-btn{opacity:1}
+
+/* revision stepper */
+.rev{display:flex;align-items:center;gap:8px;font-size:.83rem;color:var(--ink-soft);margin-top:10px}
+.stepper{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:3px}
+.stepper button{
+  width:26px;height:26px;border-radius:50%;border:none;background:transparent;cursor:pointer;
+  font-size:1rem;color:var(--ink-soft);transition:.2s;display:grid;place-items:center;line-height:1;
+}
+.stepper button:hover{background:color-mix(in srgb, var(--sc) 22%, var(--surface));color:var(--ink)}
+.stepper b{min-width:22px;text-align:center;font-size:.9rem}
+
+/* inline add rows */
+.inline-add{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.inline-add input{
+  flex:1;min-width:150px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:11px 16px;font:inherit;font-size:.9rem;color:var(--ink);outline:none;transition:.25s;
+}
+.inline-add input:focus{border-color:var(--sc);box-shadow:0 0 0 4px color-mix(in srgb, var(--sc) 16%, transparent)}
+.mini{
+  cursor:pointer;border:none;border-radius:12px;padding:11px 18px;font:inherit;font-weight:600;font-size:.85rem;
+  background:var(--ink);color:var(--bg);transition:transform .2s, filter .2s;
+}
+.mini:hover{transform:translateY(-1px);filter:brightness(1.3)}
+
+/* empty states */
+.empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}
+.empty .big{font-family:var(--serif);font-size:1.8rem;font-style:italic;color:#c9c0b2;display:block;margin-bottom:8px}
+.empty p{font-size:.92rem}
+
+/* search + filter */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.toolbar input{flex:1;min-width:180px;background:var(--card);border:1.5px solid var(--line);border-radius:99px;padding:10px 18px;font:inherit;font-size:.9rem;color:var(--ink);outline:none;transition:.25s}
+.toolbar input:focus{border-color:var(--sc);box-shadow:0 0 0 4px color-mix(in srgb, var(--sc) 16%, transparent)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;padding:7px 14px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);transition:.2s}
+.fchip:hover{border-color:var(--sc);color:var(--ink)}
+.fchip.on{background:var(--sc);border-color:var(--sc);color:#2d2a26}
+.div-tabs.dim{opacity:.45}
+.hint{font-size:.8rem;color:var(--ink-soft);margin-bottom:10px;font-style:italic}
+
+/* level tag */
+.chip.lvl{cursor:pointer;font-family:inherit}
+.chip.lvl.none{opacity:.6;border-style:dashed}
+.chip.lvl.weak{background:color-mix(in srgb, var(--rose) 35%, var(--surface));border-color:var(--rose);color:var(--ink)}
+.chip.lvl.ok{background:color-mix(in srgb, var(--butter) 35%, var(--surface));border-color:var(--butter);color:var(--ink)}
+.chip.lvl.strong{background:color-mix(in srgb, var(--mint) 35%, var(--surface));border-color:var(--mint);color:var(--ink)}
+.chip.div-tag{opacity:.85}
+.lvl-pick{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 10px}
+.chip.lvl.sel{box-shadow:0 0 0 2px var(--ink-soft)}
+
+/* drag to reorder */
+.drag-h{cursor:grab;touch-action:none;color:#c2b9a9;font-size:1.15rem;padding:2px 4px;user-select:none;-webkit-user-select:none;flex-shrink:0;line-height:1;align-self:flex-start}
+.drag-h:hover{color:var(--ink-soft)}
+.drag-h.tiny{font-size:.95rem;align-self:center}
+.dragging{box-shadow:var(--shadow-hover)!important;outline:2px dashed var(--sc,var(--rose));opacity:.92}
+body.is-dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+.subj-card .drag-h{align-self:center}
+
+/* bulk add */
+.mini.ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line)}
+.bulk{display:none;margin-top:10px;gap:8px;flex-direction:column;align-items:flex-start}
+.bulk.show{display:flex}
+.bulk textarea{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 16px;font:inherit;font-size:.9rem;color:var(--ink);outline:none;resize:vertical}
+.bulk textarea:focus{border-color:var(--sc);box-shadow:0 0 0 4px color-mix(in srgb, var(--sc) 16%, transparent)}
+
+/* tools + theme + toast */
+.tools{margin-top:34px;text-align:center}
+.tools-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tools-note{font-size:.78rem;color:var(--ink-soft);margin-top:10px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);cursor:pointer;font-size:1.1rem;transition:transform .2s}
+.theme-btn:hover{transform:scale(1.08)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 22px;border-radius:99px;font-size:.88rem;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* confetti */
+.confetti{position:fixed;width:9px;height:14px;top:-20px;z-index:99;pointer-events:none;animation:fall linear forwards;border-radius:2px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.6}}
+
+@media(max-width:600px){
+  body{padding:28px 14px 90px}
+  .overview{padding:20px}
+  .subject-page-head h2{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="toggle dark mode">🌙</button>
+<div class="toast" id="toast"></div>
+<div class="wrap">
+
+  <!-- ══ HOME PAGE ══ -->
+  <div class="page active" id="homePage">
+    <div class="hero">
+      <div class="kicker">✦ my study space ✦</div>
+      <h1>little by little, <em>day by day</em></h1>
+      <div class="date" id="today"></div>
+      <div class="countdown"><span class="num" id="daysLeft">–</span><span class="lbl" id="daysLabel">days until December 1 ✨</span></div>
+    </div>
+
+    <div class="overview">
+      <svg width="0" height="0" style="position:absolute"><defs>
+        <linearGradient id="gradRing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f4a7b9"/><stop offset="100%" stop-color="#c3b2e8"/>
+        </linearGradient></defs></svg>
+      <div class="carousel" id="carousel">
+        <div class="slide slide-main">
+          <div class="ring">
+            <svg width="86" height="86">
+              <circle class="track" cx="43" cy="43" r="37" stroke-width="8" fill="none"/>
+              <circle class="fill" id="ringFill" cx="43" cy="43" r="37" stroke-width="8" fill="none"/>
+            </svg>
+            <div class="pct" id="ringPct">0%</div>
+          </div>
+          <div class="ov-text">
+            <h2 id="ovHead">Ready when you are</h2>
+            <p id="ovSub">tap a subject to open it ✨</p>
+          </div>
+        </div>
+        <div class="slide">
+          <div class="slide-title">by subject · chapters done</div>
+          <div class="subj-rings" id="subjRings"></div>
+        </div>
+      </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i></div>
+    </div>
+
+    <div class="addbar">
+      <input id="subjectName" placeholder="a new subject…" onkeydown="if(event.key==='Enter')addSubject()">
+      <button class="btn btn-primary" onclick="addSubject()">+ add</button>
+    </div>
+
+    <div class="subj-grid" id="subjGrid" data-group="sj"></div>
+
+    <div class="tools">
+      <div class="tools-row">
+        <button class="btn btn-soft" onclick="exportBackup()">⬇ export backup</button>
+        <button class="btn btn-soft" onclick="document.getElementById('importFile').click()">⬆ import backup</button>
+        <button class="btn btn-soft" id="installBtn" style="display:none" onclick="installApp()">📲 install app</button>
+        <button class="btn btn-soft" id="clearBtn" onclick="clearAll()">✦ start fresh</button>
+      </div>
+      <div class="tools-note" id="bkInfo"></div>
+      <input type="file" id="importFile" accept=".json,application/json" hidden onchange="if(this.files[0])importBackup(this.files[0]);this.value=''">
+    </div>
+  </div>
+
+  <!-- ══ SUBJECT PAGE ══ -->
+  <div class="page" id="subjectPage">
+    <button class="back-btn" onclick="goHome()">← all subjects</button>
+    <div id="subjectContent"></div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = ['#f4a7b9','#f6c390','#a8d8b9','#a5c8f0','#c3b2e8','#f2dd8a'];
+const KEY = 'studySpaceV3';
+const ICONS = {'Physics':'⚡','Chemistry':'🧪','Maths':'📐'};
+
+let data = JSON.parse(localStorage.getItem(KEY) || 'null');
+if(!data){
+  data = [
+    {id:1, name:'Physics',    color:'#a5c8f0', chapters:[], divisions:[
+      {id:11, name:'Mechanics',               chapters:[]},
+      {id:12, name:'Electromagnetism',        chapters:[]},
+      {id:13, name:'Optics & Modern Physics', chapters:[]},
+      {id:14, name:'Waves & Thermodynamics',  chapters:[]},
+    ]},
+    {id:2, name:'Chemistry',  color:'#a8d8b9', chapters:[], divisions:[
+      {id:21, name:'Physical Chemistry',  chapters:[]},
+      {id:22, name:'Organic Chemistry',   chapters:[]},
+      {id:23, name:'Inorganic Chemistry', chapters:[]},
+    ]},
+    {id:3, name:'Maths',      color:'#f6c390', chapters:[], divisions:[
+      {id:31, name:'Algebra',               chapters:[]},
+      {id:32, name:'Trigonometry',          chapters:[]},
+      {id:33, name:'Coordinate Geometry',   chapters:[]},
+      {id:34, name:'Calculus',              chapters:[]},
+      {id:35, name:'Vectors & 3D Geometry', chapters:[]},
+      {id:36, name:'Graphs',                chapters:[]},
+    ]},
+  ];
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+normalize(data);
+// migration: give existing saved subjects their divisions if missing
+const DEFAULT_DIVS = {
+  'Physics':['Mechanics','Electromagnetism','Optics & Modern Physics','Waves & Thermodynamics'],
+  'Maths':['Algebra','Trigonometry','Coordinate Geometry','Calculus','Vectors & 3D Geometry','Graphs'],
+};
+data.forEach(s=>{
+  if(DEFAULT_DIVS[s.name] && !(s.divisions && s.divisions.length)){
+    s.divisions = DEFAULT_DIVS[s.name].map((n,i)=>({id: s.id*100 + i + 1, name:n, chapters:[]}));
+    s.chapters = [];
+  }
+  // merge old split 'Optics' + 'Modern Physics' into one division
+  if(s.name==='Physics' && (s.divisions||[]).some(d=>d.name==='Optics') && (s.divisions||[]).some(d=>d.name==='Modern Physics')){
+    const optics = s.divisions.find(d=>d.name==='Optics');
+    const modern = s.divisions.find(d=>d.name==='Modern Physics');
+    s.divisions = s.divisions.filter(d=>d.name!=='Optics' && d.name!=='Modern Physics');
+    s.divisions.splice(2, 0, {id: optics.id, name:'Optics & Modern Physics', chapters:[...optics.chapters, ...modern.chapters]});
+  }
+});
+localStorage.setItem(KEY, JSON.stringify(data));
+
+const openChapters = new Set();
+let searchQ = '', filterMode = 'all', suppressUntil = 0;
+let currentSubject = null;
+let currentDiv = null;
+
+document.getElementById('today').textContent =
+  new Date().toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+// countdown to December 1
+const target = new Date(new Date().getFullYear(), 11, 1);
+function updateCountdown(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((target - now) / 86400000);
+  const numEl = document.getElementById('daysLeft');
+  const lblEl = document.getElementById('daysLabel');
+  if(diff > 0){ numEl.textContent = diff; lblEl.textContent = 'days until December 1 ✨'; }
+  else if(diff === 0){ numEl.textContent = '🎉'; lblEl.textContent = "IT'S DECEMBER 1!"; }
+  else { numEl.textContent = Math.abs(diff); lblEl.textContent = 'days since the big day 🌅'; }
+}
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
+const CIRC = 2*Math.PI*37;
+document.getElementById('ringFill').style.strokeDasharray = CIRC;
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(data)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function allChapters(s){
+  let arr = [...(s.chapters||[])];
+  (s.divisions||[]).forEach(d=> arr = arr.concat(d.chapters));
+  return arr;
+}
+function entries(s){
+  const out=[]; (s.chapters||[]).forEach(c=>out.push({c,d:null}));
+  (s.divisions||[]).forEach(d=>d.chapters.forEach(c=>out.push({c,d:d.name})));
+  return out;
+}
+function findChapter(cid){
+  const s = data.find(x=>x.id===currentSubject);
+  const e = entries(s).find(e=>e.c.id===cid); return e && e.c;
+}
+function normalize(arr){
+  arr.forEach((s,i)=>{
+    s.color = s.color || COLORS[i%COLORS.length];
+    s.chapters = Array.isArray(s.chapters) ? s.chapters : [];
+    s.divisions = Array.isArray(s.divisions) ? s.divisions : [];
+    const fix = c=>{ c.title=String(c.title||'untitled'); c.done=!!c.done; c.revisions=+c.revisions||0;
+      c.todos=Array.isArray(c.todos)?c.todos:[]; if(!['weak','ok','strong'].includes(c.level)) delete c.level; };
+    s.chapters.forEach(fix);
+    s.divisions.forEach(d=>{ d.chapters=Array.isArray(d.chapters)?d.chapters:[]; d.chapters.forEach(fix); });
+  });
+  return arr;
+}
+function currentChapterList(){
+  const s = data.find(x=>x.id===currentSubject);
+  if(!s) return [];
+  if(s.divisions && s.divisions.length){
+    const d = s.divisions.find(d=>d.id===currentDiv) || s.divisions[0];
+    return d.chapters;
+  }
+  return s.chapters;
+}
+
+/* ── navigation ── */
+function openSubject(sid){
+  if(Date.now() < suppressUntil) return;
+  searchQ=''; filterMode='all';
+  currentSubject = sid;
+  const s = data.find(x=>x.id===sid);
+  currentDiv = (s.divisions && s.divisions.length) ? s.divisions[0].id : null;
+  document.getElementById('homePage').classList.remove('active');
+  document.getElementById('subjectPage').classList.add('active');
+  window.scrollTo({top:0});
+  renderSubjectPage();
+}
+function goHome(){
+  currentSubject = null; currentDiv = null;
+  document.getElementById('subjectPage').classList.remove('active');
+  document.getElementById('homePage').classList.add('active');
+  renderHome();
+}
+function selectDiv(did){ currentDiv = did; searchQ=''; filterMode='all'; renderSubjectPage(); }
+
+/* ── subject ops ── */
+function addSubject(){
+  const inp = document.getElementById('subjectName');
+  const name = inp.value.trim(); if(!name) return;
+  data.push({id:Date.now(), name, color:COLORS[data.length % COLORS.length], chapters:[], divisions:[]});
+  inp.value=''; save(); renderHome();
+}
+function deleteSubject(id, ev){
+  if(ev) ev.stopPropagation();
+  if(!confirm('delete this subject and everything in it?')) return;
+  data = data.filter(s=>s.id!==id);
+  if(currentSubject === id) goHome(); else { save(); renderHome(); }
+}
+function parseLines(t){
+  return String(t).split(/\r?\n/).map(l=>l.replace(/^\s*(?:[-*•▪◦]|\d+[.)])\s+/,'').trim()).filter(Boolean);
+}
+function chKey(){ return currentDiv ? currentSubject+'-'+currentDiv : String(currentSubject); }
+function addChapters(lines){
+  if(!lines.length) return;
+  const s = data.find(x=>x.id===currentSubject);
+  const target = (s.divisions && s.divisions.length) ? s.divisions.find(d=>d.id===currentDiv).chapters : s.chapters;
+  const t0 = Date.now();
+  lines.forEach((name,i)=>target.push({id:t0+i, title:name, done:false, revisions:0, todos:[]}));
+  save(); renderSubjectPage(); renderHome();
+  if(lines.length>1) toast(`added ${lines.length} chapters ✨`);
+}
+function addChapter(){
+  const inp = document.querySelector(`input[data-ch="${chKey()}"]`);
+  addChapters(parseLines(inp.value));
+}
+function addTodos(cid, lines){
+  if(!lines.length) return;
+  const c = findChapter(cid); const t0 = Date.now();
+  lines.forEach((t,i)=>c.todos.push({id:t0+i, text:t, done:false}));
+  openChapters.add(cid);
+  save(); renderSubjectPage();
+  if(lines.length>1) toast(`added ${lines.length} tasks ✨`);
+}
+function pasteAdd(e, kind, cid){
+  const t = (e.clipboardData || window.clipboardData).getData('text');
+  const lines = parseLines(t);
+  if(lines.length < 2) return;           // single line: normal paste
+  e.preventDefault();
+  kind==='ch' ? addChapters(lines) : addTodos(cid, lines);
+}
+function toggleBulk(k){
+  const el = document.getElementById('bulk-'+k);
+  el.classList.toggle('show');
+  if(el.classList.contains('show')) el.querySelector('textarea').focus();
+}
+function submitBulk(kind, cid){
+  const k = kind==='ch' ? 'ch' : 'td'+cid;
+  const lines = parseLines(document.querySelector('#bulk-'+k+' textarea').value);
+  kind==='ch' ? addChapters(lines) : addTodos(cid, lines);
+}
+function deleteChapter(cid){
+  const s = data.find(x=>x.id===currentSubject);
+  s.chapters = (s.chapters||[]).filter(c=>c.id!==cid);
+  (s.divisions||[]).forEach(d=> d.chapters = d.chapters.filter(c=>c.id!==cid));
+  save(); renderSubjectPage(); renderHome();
+}
+function toggleChapter(cid, el){
+  const c = findChapter(cid);
+  c.done = el.checked;
+  if(c.done) confetti();
+  save(); renderSubjectPage(); renderHome();
+}
+function toggleOpen(cid, el){
+  const card = el.closest('.chapter');
+  if(openChapters.has(cid)){ openChapters.delete(cid); card.classList.remove('open'); }
+  else { openChapters.add(cid); card.classList.add('open'); }
+}
+function addTodo(cid){
+  const inp = document.querySelector(`input[data-td="${cid}"]`);
+  addTodos(cid, parseLines(inp.value));
+}
+function toggleTodo(cid, tid, el){
+  const c = findChapter(cid);
+  c.todos.find(t=>t.id===tid).done = el.checked;
+  save(); renderSubjectPage();
+}
+function deleteTodo(cid, tid){
+  const c = findChapter(cid);
+  c.todos = c.todos.filter(t=>t.id!==tid);
+  save(); renderSubjectPage();
+}
+function changeRev(cid, d){
+  const c = findChapter(cid);
+  c.revisions = Math.max(0, c.revisions+d);
+  save(); renderSubjectPage();
+}
+function clearAll(){
+  if(!confirm('erase EVERYTHING? fresh start, no going back 🌪')) return;
+  data = []; save(); goHome();
+}
+function confetti(){
+  const colors = ['#f4a7b9','#f6c390','#a8d8b9','#a5c8f0','#c3b2e8','#f2dd8a'];
+  for(let i=0;i<26;i++){
+    const p = document.createElement('div');
+    p.className='confetti';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[i%colors.length];
+    p.style.animationDuration = (1.2+Math.random()*1.4)+'s';
+    p.style.animationDelay = (Math.random()*.3)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 3000);
+  }
+}
+
+/* ── rendering ── */
+function renderHome(){
+  const total = data.reduce((a,s)=>a+allChapters(s).length,0);
+  const doneAll = data.reduce((a,s)=>a+allChapters(s).filter(c=>c.done).length,0);
+  const pct = total ? Math.round(doneAll/total*100) : 0;
+  document.getElementById('ringFill').style.strokeDashoffset = CIRC*(1-pct/100);
+  document.getElementById('ringPct').textContent = pct+'%';
+  document.getElementById('ovHead').textContent =
+    !data.length ? 'Ready when you are' :
+    pct===100 ? 'Everything done?! Incredible 🎉' :
+    pct>0 ? 'you\u2019re on your way 🌿' : 'ready when you are';
+  document.getElementById('ovSub').textContent =
+    !data.length ? 'add a subject below to begin ✨' :
+    `${doneAll} of ${total} chapter${total===1?'':'s'} complete · tap a subject to open it`;
+
+  renderRings();
+
+  document.getElementById('subjGrid').innerHTML = data.map((s,i)=>{
+    const chs = allChapters(s);
+    const dn = chs.filter(c=>c.done).length;
+    const p = chs.length ? Math.round(dn/chs.length*100) : 0;
+    const divInfo = (s.divisions && s.divisions.length) ? ` · ${s.divisions.length} divisions` : '';
+    const weak = chs.filter(c=>c.level==='weak').length;
+    const icon = ICONS[s.name] || '📖';
+    return `
+    <div class="subj-card" style="--sc:${s.color};animation-delay:${i*.07}s" onclick="openSubject(${s.id})" data-did="${s.id}">
+      <span class="del icon-btn" onclick="deleteSubject(${s.id}, event)" title="delete subject">🗑</span>
+      <div class="subj-icon">${icon}</div>
+      <div class="info">
+        <h2>${esc(s.name)}</h2>
+        <div class="meta">${dn}/${chs.length} chapters done${divInfo}${weak?` · ⚠ ${weak} weak`:''}</div>
+        <div class="bar"><div class="fill" style="width:${p}%"></div></div>
+      </div>
+      <span class="drag-h" title="drag to reorder" onclick="event.stopPropagation()">⠿</span>
+      <span class="arrow">→</span>
+    </div>`;
+  }).join('') || `<div class="empty" style="grid-column:1/-1"><span class="big">a fresh page awaits</span><p>add your first subject above 🌱</p></div>`;
+
+  document.getElementById('clearBtn').style.display = data.length ? '' : 'none';
+  renderBackupInfo();
+}
+
+const LVL = {weak:['⚠ weak','weak'], ok:['◐ moderate','ok'], strong:['★ strong','strong']};
+let levelPick=null;
+function pickLevel(cid){ levelPick = levelPick===cid ? null : cid; renderSubjectPage(); }
+function setLevel(cid, lv){
+  const c=findChapter(cid);
+  if(lv) c.level=lv; else delete c.level;
+  levelPick=null; save(); renderSubjectPage(); renderHome();
+}
+function chapterHTML(c, divName, canDrag, q){
+  const s = data.find(x=>x.id===currentSubject);
+  const lv = c.level && LVL[c.level];
+  const force = !!q && c.todos.some(t=>t.text.toLowerCase().includes(q));
+  const open = openChapters.has(c.id) || force;
+  return `
+  <div class="chapter ${c.done?'done':''} ${open?'open':''}" style="--sc:${s.color}" data-did="${c.id}">
+    <label class="chk">
+      <input type="checkbox" ${c.done?'checked':''} onchange="toggleChapter(${c.id},this)">
+      <span class="box"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg></span>
+    </label>
+    <div class="ch-body">
+      <div class="ch-head" onclick="toggleOpen(${c.id},this)">
+        <span class="caret">▶</span><span class="ch-title">${esc(c.title)}</span>
+      </div>
+      <div class="chips">
+        ${divName?`<span class="chip div-tag">📂 ${esc(divName)}</span>`:''}
+        <button class="chip lvl ${lv?lv[1]:'none'}" onclick="pickLevel(${c.id})" title="set how well you know this chapter">${lv?lv[0]:'＋ tag'}</button>
+        <span class="chip">🔁 ${c.revisions} revision${c.revisions===1?'':'s'}</span>
+        ${c.todos.length?`<span class="chip">☑ ${c.todos.filter(t=>t.done).length}/${c.todos.length} tasks</span>`:''}
+        ${c.done?`<span class="chip done-chip">✦ complete</span>`:''}
+      </div>
+      ${levelPick===c.id?`<div class="lvl-pick">
+        ${[['weak','⚠ weak'],['ok','◐ moderate'],['strong','★ strong']].map(([k,l])=>`<button class="chip lvl ${k} ${c.level===k?'sel':''}" onclick="setLevel(${c.id},'${k}')">${l}</button>`).join('')}
+        ${c.level?`<button class="chip lvl none" onclick="setLevel(${c.id},null)">✕ clear</button>`:''}
+      </div>`:''}
+      <div class="ch-more">
+      <div class="todos" data-group="td" data-ctx="${c.id}">
+        ${c.todos.map(t=>`
+        <div class="todo" data-did="${t.id}">
+          ${c.todos.length>1?'<span class="drag-h tiny" title="drag to reorder">⠿</span>':''}
+          <input type="checkbox" class="tchk" ${t.done?'checked':''} onchange="toggleTodo(${c.id},${t.id},this)">
+          <span class="${t.done?'done':''}">${esc(t.text)}</span>
+          <button class="icon-btn" onclick="deleteTodo(${c.id},${t.id})" title="remove this task">✕</button>
+        </div>`).join('')}
+      </div>
+      <div class="rev">
+        <span>revisions</span>
+        <span class="stepper">
+          <button onclick="changeRev(${c.id},-1)">−</button>
+          <b>${c.revisions}</b>
+          <button onclick="changeRev(${c.id},1)">+</button>
+        </span>
+        <button class="icon-btn" style="margin-left:auto" onclick="deleteChapter(${c.id})" title="delete chapter">🗑</button>
+      </div>
+      <div class="inline-add">
+        <input placeholder="add a to-do… (or paste a list)" data-td="${c.id}" onkeydown="if(event.key==='Enter')addTodo(${c.id})" onpaste="pasteAdd(event,'td',${c.id})">
+        <button class="mini" onclick="addTodo(${c.id})">+ to-do</button>
+        <button class="mini ghost" onclick="toggleBulk('td${c.id}')" title="add many at once">☰ bulk</button>
+      </div>
+      <div class="bulk" id="bulk-td${c.id}">
+        <textarea rows="5" placeholder="one task per line"></textarea>
+        <button class="mini" onclick="submitBulk('td',${c.id})">add all</button>
+      </div>
+      </div>
+    </div>
+    ${canDrag?'<span class="drag-h" title="drag to reorder">⠿</span>':''}
+  </div>`;
+}
+
+function isSearching(){ return searchQ.trim()!=='' || filterMode!=='all'; }
+function passFilter(c){
+  return filterMode==='all' || (filterMode==='todo' && !c.done) || (filterMode==='done' && c.done) || c.level===filterMode;
+}
+function matchesQ(c,q){ return !q || c.title.toLowerCase().includes(q) || c.todos.some(t=>t.text.toLowerCase().includes(q)); }
+
+function renderChapterList(){
+  const el = document.getElementById('chapterList'); if(!el) return;
+  const s = data.find(x=>x.id===currentSubject); if(!s) return;
+  const q = searchQ.trim().toLowerCase();
+  const searching = isSearching();
+  const hasDivs = s.divisions && s.divisions.length;
+  const tabs = document.querySelector('.div-tabs'); if(tabs) tabs.classList.toggle('dim', searching);
+  let html;
+  if(searching){
+    const list = entries(s).filter(e=>matchesQ(e.c,q) && passFilter(e.c));
+    html = (hasDivs ? '<div class="hint">showing matches across all divisions</div>' : '') +
+      (list.map(e=>chapterHTML(e.c, hasDivs?e.d:null, false, q)).join('')
+        || '<div class="empty"><span class="big">nothing found</span><p>try a different word or filter 🔍</p></div>');
+  } else {
+    const cur = hasDivs ? (s.divisions.find(d=>d.id===currentDiv) || s.divisions[0]) : null;
+    const chapters = cur ? cur.chapters : s.chapters;
+    html = chapters.map(c=>chapterHTML(c, null, true, '')).join('')
+      || `<div class="empty"><span class="big">no chapters yet</span><p>add your first ${cur?esc(cur.name)+' ':''}chapter below 🌱</p></div>`;
+  }
+  el.innerHTML = html;
+}
+function onSearch(v){ searchQ = v; renderChapterList(); }
+function setFilter(k){ filterMode = k; renderSubjectPage(); }
+
+function renderSubjectPage(){
+  const s = data.find(x=>x.id===currentSubject);
+  if(!s) return;
+  const chs = allChapters(s);
+  const dn = chs.filter(c=>c.done).length;
+  const p = chs.length ? Math.round(dn/chs.length*100) : 0;
+  const cnt = k=>chs.filter(c=>c.level===k).length;
+  const lc = k=>cnt(k)?` (${cnt(k)})`:'';
+
+  let divTabs = '';
+  if(s.divisions && s.divisions.length){
+    divTabs = `<div class="div-tabs">` + s.divisions.map(d=>{
+      const ddn = d.chapters.filter(c=>c.done).length;
+      const dp = d.chapters.length ? Math.round(ddn/d.chapters.length*100) : 0;
+      return `<button class="div-tab ${d.id===currentDiv?'active':''}" onclick="selectDiv(${d.id})">${esc(d.name)} <span class="mini-pct">${dp}%</span></button>`;
+    }).join('') + `</div>`;
+  }
+  const filters = [['all','all'],['todo','unfinished'],['done','done'],['weak',`⚠ weak${lc('weak')}`],['ok',`◐ moderate${lc('ok')}`],['strong',`★ strong${lc('strong')}`]]
+    .map(([k,l])=>`<button class="fchip ${filterMode===k?'on':''}" onclick="setFilter('${k}')">${l}</button>`).join('');
+  const key = chKey();
+
+  document.getElementById('subjectContent').innerHTML = `
+    <div class="subject-page-head" style="--sc:${s.color}">
+      <h2>${esc(s.name)}</h2>
+      <span class="subj-stats">${dn}/${chs.length} chapters done</span>
+    </div>
+    <div class="bar" style="height:8px;background:var(--line);border-radius:99px;overflow:hidden">
+      <div style="height:100%;border-radius:99px;background:${s.color};width:${p}%;transition:width .8s cubic-bezier(.22,1,.36,1)"></div>
+    </div>
+    ${divTabs}
+    <div class="toolbar" style="--sc:${s.color}">
+      <input id="searchInp" type="search" placeholder="search chapters & tasks…" value="${esc(searchQ)}" oninput="onSearch(this.value)">
+      <div class="filters">${filters}</div>
+    </div>
+    <div id="chapterList" data-group="ch" style="margin-top:18px"></div>
+    <div style="--sc:${s.color}">
+      <div class="inline-add">
+        <input placeholder="add a chapter… (or paste a list)" data-ch="${key}" onkeydown="if(event.key==='Enter')addChapter()" onpaste="pasteAdd(event,'ch')">
+        <button class="mini" onclick="addChapter()">+ chapter</button>
+        <button class="mini ghost" onclick="toggleBulk('ch')" title="add many at once">☰ bulk</button>
+      </div>
+      <div class="bulk" id="bulk-ch">
+        <textarea rows="5" placeholder="one chapter per line — paste a whole list"></textarea>
+        <button class="mini" onclick="submitBulk('ch')">add all</button>
+      </div>
+    </div>
+  `;
+  renderChapterList();
+}
+
+function renderRings(){
+  const R=29, C2=2*Math.PI*R;
+  document.getElementById('subjRings').innerHTML = data.map(s=>{
+    const chs=allChapters(s), dn=chs.filter(c=>c.done).length;
+    const p=chs.length?Math.round(dn/chs.length*100):0;
+    return `<div class="subj-ring" onclick="openSubject(${s.id})">
+      <div class="ring"><svg width="72" height="72" style="transform:rotate(-90deg)">
+        <circle class="track" cx="36" cy="36" r="${R}" stroke-width="7" fill="none" style="stroke:var(--line)"/>
+        <circle cx="36" cy="36" r="${R}" stroke-width="7" fill="none" stroke-linecap="round"
+          style="stroke:${s.color};stroke-dasharray:${C2};stroke-dashoffset:${C2*(1-p/100)};transition:stroke-dashoffset .8s"/>
+      </svg><div class="pct">${p}%</div></div>
+      <div class="sr-name">${esc(s.name)}</div>
+      <div class="sr-meta">${dn}/${chs.length} chapters</div>
+    </div>`;
+  }).join('') || '<div class="empty" style="padding:10px">no subjects yet</div>';
+
+}
+
+const car=document.getElementById('carousel'), dots=document.querySelectorAll('#dots i');
+car.addEventListener('scroll',()=>{
+  const i=Math.round(car.scrollLeft/car.clientWidth);
+  dots.forEach((d,j)=>d.classList.toggle('on',i===j));
+});
+dots.forEach((d,j)=>d.onclick=()=>car.scrollTo({left:j*car.clientWidth,behavior:'smooth'}));
+
+/* ── drag to reorder (mouse + touch) ── */
+let drag=null, dragRAF=0;
+function reorderBy(arr, ids){
+  const m=new Map(arr.map(x=>[x.id,x]));
+  const out=ids.map(i=>m.get(i)).filter(Boolean);
+  arr.forEach(x=>{ if(!ids.includes(x.id)) out.push(x); });
+  arr.length=0; arr.push(...out);
+}
+function onReorder(group, ctx, ids){
+  if(group==='sj'){ reorderBy(data, ids); save(); renderRings(); return; }
+  if(group==='ch') reorderBy(currentChapterList(), ids);
+  else if(group==='td'){ const c=findChapter(Number(ctx)); if(c) reorderBy(c.todos, ids); }
+  save();
+}
+function dragReposition(){
+  if(!drag) return;
+  const {item,cont}=drag, y=drag.y;
+  const sibs=[...cont.children].filter(x=>x!==item && x.hasAttribute('data-did'));
+  if(!sibs.length) return;
+  let before=null;
+  for(const sb of sibs){ const r=sb.getBoundingClientRect(); if(y<r.top+r.height/2){ before=sb; break; } }
+  if(before){ if(item.nextElementSibling!==before) cont.insertBefore(item,before); }
+  else { const last=sibs[sibs.length-1]; if(last.nextElementSibling!==item) last.after(item); }
+}
+function dragLoop(){
+  if(!drag) return;
+  if(drag.y<90) window.scrollBy(0,-14); else if(drag.y>window.innerHeight-90) window.scrollBy(0,14);
+  dragReposition();
+  dragRAF=requestAnimationFrame(dragLoop);
+}
+document.addEventListener('pointerdown',e=>{
+  const h=e.target.closest('.drag-h'); if(!h) return;
+  const item=h.closest('[data-did]'); if(!item) return;
+  e.preventDefault();
+  drag={item, cont:item.parentElement, y:e.clientY};
+  item.classList.add('dragging'); document.body.classList.add('is-dragging');
+  try{ h.setPointerCapture(e.pointerId); }catch(_){}
+  dragRAF=requestAnimationFrame(dragLoop);
+});
+document.addEventListener('pointermove',e=>{ if(drag) drag.y=e.clientY; });
+function endDrag(){
+  if(!drag) return;
+  cancelAnimationFrame(dragRAF);
+  const {item,cont}=drag;
+  item.classList.remove('dragging'); document.body.classList.remove('is-dragging');
+  const ids=[...cont.children].filter(x=>x.hasAttribute('data-did')).map(x=>Number(x.dataset.did));
+  const g=cont.dataset.group, ctx=cont.dataset.ctx;
+  drag=null; suppressUntil=Date.now()+350;
+  onReorder(g,ctx,ids);
+}
+document.addEventListener('pointerup',endDrag);
+document.addEventListener('pointercancel',endDrag);
+
+/* ── dark mode ── */
+const THEME_KEY='studySpaceTheme';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent = t==='dark' ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  const t = document.documentElement.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY,t); applyTheme(t);
+}
+applyTheme(localStorage.getItem(THEME_KEY) || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+/* ── backup ── */
+const BK_KEY='studySpaceBackupAt';
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2400);
+}
+function renderBackupInfo(){
+  const el=document.getElementById('bkInfo'); if(!el) return;
+  const t=+localStorage.getItem(BK_KEY)||0;
+  if(!t){ el.textContent='no backup yet — your data lives only in this browser'; return; }
+  const d=Math.floor((Date.now()-t)/86400000);
+  el.textContent='last backup: '+(d<=0?'today':d===1?'yesterday':d+' days ago');
+}
+function exportBackup(){
+  const payload={app:'studySpace',version:1,exportedAt:new Date().toISOString(),data};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='study-space-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  localStorage.setItem(BK_KEY,String(Date.now())); renderBackupInfo(); toast('backup saved ⬇');
+}
+function importBackup(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    let arr;
+    try{
+      const obj=JSON.parse(r.result);
+      arr=Array.isArray(obj)?obj:obj.data;
+      if(!Array.isArray(arr)||arr.some(x=>!x||typeof x.name!=='string'||x.id==null)) throw new Error('bad');
+    }catch(err){ alert("that file doesn't look like a study space backup"); return; }
+    if(!confirm(`replace everything with this backup (${arr.length} subject${arr.length===1?'':'s'})?`)) return;
+    data=normalize(arr); save(); goHome(); toast('backup restored ✨');
+  };
+  r.readAsText(file);
+}
+
+/* ── installable (PWA) ── */
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredInstall=e;
+  document.getElementById('installBtn').style.display='';
+});
+window.addEventListener('appinstalled',()=>{
+  deferredInstall=null; document.getElementById('installBtn').style.display='none'; toast('installed ✨');
+});
+function installApp(){
+  if(!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.finally(()=>{ deferredInstall=null; document.getElementById('installBtn').style.display='none'; });
+}
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+// theme-color follows dark mode
+const _applyTheme=applyTheme;
+applyTheme=function(t){ _applyTheme(t); const m=document.querySelector('meta[name=theme-color]'); if(m) m.content = t==='dark' ? '#171513' : '#faf7f2'; };
+applyTheme(document.documentElement.getAttribute('data-theme')||'light');
+
+renderHome();
+</script>
+</body>
+</html>
